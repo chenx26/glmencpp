@@ -29,10 +29,15 @@ private:
     // num_lambda is the number of lambdas for the search grid
     int num_lambda_;
     
+    // type of GLM
+    // 1: Exponential
+    // 2: Gamma
+    int glm_type;
+    
     
 public:
     // constructor
-    glmnetcpp(Eigen::MatrixXd A, Eigen::VectorXd b, double alpha, int num_lambda);
+    glmnetcpp(Eigen::MatrixXd A, Eigen::VectorXd b, double alpha, int num_lambda, int glm_type);
     
     // function to compute the negative log-likelihood (NLL) of exponential GLM from data
     double ExpNegativeLogLikelihood();
@@ -57,7 +62,17 @@ public:
     
     // function for performing Proximal Gradient Descent (PGD)
     Eigen::VectorXd ProxGradDescent();
-
+    
+    // function for fitting GLM model given fixed lambda
+    Eigen::VectorXd FitGlmFixed();
+    
+    // function for generating a grid of candidate lambdas
+    Eigen::VectorXd GenerateLambdaGrid();
+    
+    // function for automatically choosing the optimal lambda 
+    // and the corresponding weights using cross validation
+    Eigen::VectorXd FitGlmCv();
+    
 };
 
 
