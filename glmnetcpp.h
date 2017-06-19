@@ -32,7 +32,7 @@ private:
     // type of GLM
     // 1: Exponential
     // 2: Gamma
-    int glm_type;
+    int glm_type_;
     
     
 public:
@@ -40,25 +40,64 @@ public:
     glmnetcpp(Eigen::MatrixXd A, Eigen::VectorXd b, double alpha, int num_lambda, int glm_type);
     
     // function to compute the negative log-likelihood (NLL) of exponential GLM from data
-    double ExpNegativeLogLikelihood();
+    double ExpNegativeLogLikelihood(Eigen::VectorXd x);
     
     // function to compute the gradient of the negative log-likelihood of exponential GLM
-    Eigen::VectorXd GradExpNegativeLogLikelihood();
-    
+    Eigen::VectorXd GradExpNegativeLogLikelihood(Eigen::VectorXd x);
+    Eigen::MatrixXd GetA_() const {
+        return A_;
+    }
+
+    void SetA_(Eigen::MatrixXd A_) {
+        this->A_ = A_;
+    }
+
+    double GetAlpha_() const {
+        return alpha_;
+    }
+
+    void SetAlpha_(double alpha_) {
+        this->alpha_ = alpha_;
+    }
+
+    Eigen::VectorXd GetB_() const {
+        return b_;
+    }
+
+    void SetB_(Eigen::VectorXd b_) {
+        this->b_ = b_;
+    }
+
+    int GetGlm_type() const {
+        return glm_type_;
+    }
+
+    void SetGlm_type(int glm_type) {
+        this->glm_type_ = glm_type;
+    }
+
+    int GetNum_lambda_() const {
+        return num_lambda_;
+    }
+
+    void SetNum_lambda_(int num_lambda_) {
+        this->num_lambda_ = num_lambda_;
+    }
+
         // function to compute the negative log-likelihood (NLL) of Gamma GLM from data
-    double GammaNegativeLogLikelihood();
+    double GammaNegativeLogLikelihood(Eigen::VectorXd x);
     
     // function to compute the gradient of the negative log-likelihood of Gamma GLM
-    Eigen::VectorXd GradGammaNegativeLogLikelihood();
+    Eigen::VectorXd GradGammaNegativeLogLikelihood(Eigen::VectorXd x);
     
     // function for the soft-thresholding operator, this is multi-dimensional
-    Eigen::VectorXd SoftThresholding();
+    Eigen::VectorXd SoftThresholding(Eigen::VectorXd x);
     
     // function for the smooth part of the objective function
-    double SmoothObjFun();
+    double SmoothObjFun(Eigen::VectorXd x);
     
     // function for the gradient of the smooth part of the objective function
-    Eigen::VectorXd GradSmoothObjFun();
+    Eigen::VectorXd GradSmoothObjFun(Eigen::VectorXd x);
     
     // function for performing Proximal Gradient Descent (PGD)
     Eigen::VectorXd ProxGradDescent();
