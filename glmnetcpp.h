@@ -16,24 +16,7 @@
 #include <Eigen/Dense>
 
 class glmnetcpp{
-private:
-    // A is the matrix of the independent variables
-    Eigen::MatrixXd A_;
-    
-    // b is the vector of dependent variables
-    Eigen::VectorXd b_;
-    
-    // alpha is the weight between L1 and L2 regularization, between 0 and 1.
-    double alpha_;
-    
-    // num_lambda is the number of lambdas for the search grid
-    int num_lambda_;
-    
-    // type of GLM
-    // 1: Exponential
-    // 2: Gamma
-    int glm_type_;
-    
+        
     
 public:
     // constructor
@@ -112,6 +95,24 @@ public:
     // and the corresponding weights using cross validation
     Eigen::VectorXd FitGlmCv();
     
+private:
+    // A is the matrix of the independent variables
+    Eigen::MatrixXd A_;
+    
+    // b is the vector of dependent variables
+    Eigen::VectorXd b_;
+    
+    // alpha is the weight between L1 and L2 regularization, between 0 and 1.
+    double alpha_;
+    
+    // num_lambda is the number of lambdas for the search grid
+    int num_lambda_;
+    
+    // type of GLM
+    // 1: Exponential
+    // 2: Gamma
+    int glm_type_;
+
 };
 
 
