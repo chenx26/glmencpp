@@ -15,56 +15,20 @@
 #define GLMNETCPP_H
 #include <Eigen/Dense>
 
-class glmnetcpp{
+class GlmNetCpp{
         
     
 public:
     // constructor
-    glmnetcpp(Eigen::MatrixXd A, Eigen::VectorXd b, double alpha, int num_lambda, int glm_type);
+    GlmNetCpp(Eigen::MatrixXd predictor_matrix, Eigen::VectorXd b, double alpha, int num_lambda, int glm_type);
     
     // function to compute the negative log-likelihood (NLL) of exponential GLM from data
-    double ExpNegativeLogLikelihood(Eigen::VectorXd x);
+    double exp_negative_log_likelihood(Eigen::VectorXd x);
     
     // function to compute the gradient of the negative log-likelihood of exponential GLM
-    Eigen::VectorXd GradExpNegativeLogLikelihood(Eigen::VectorXd x);
-    Eigen::MatrixXd GetA_() const {
-        return A_;
-    }
-
-    void SetA_(Eigen::MatrixXd A_) {
-        this->A_ = A_;
-    }
-
-    double GetAlpha_() const {
-        return alpha_;
-    }
-
-    void SetAlpha_(double alpha_) {
-        this->alpha_ = alpha_;
-    }
-
-    Eigen::VectorXd GetB_() const {
-        return b_;
-    }
-
-    void SetB_(Eigen::VectorXd b_) {
-        this->b_ = b_;
-    }
-
-    int GetGlm_type() const {
-        return glm_type_;
-    }
-
-    void SetGlm_type(int glm_type) {
-        this->glm_type_ = glm_type;
-    }
-
-    int GetNum_lambda_() const {
-        return num_lambda_;
-    }
-
-    void SetNum_lambda_(int num_lambda_) {
-        this->num_lambda_ = num_lambda_;
+    Eigen::VectorXd grad_exp_negative_log_likelihood(Eigen::VectorXd x);
+    Eigen::MatrixXd get_predictor_matrix() const {
+        return predictor_matrix_;
     }
 
         // function to compute the negative log-likelihood (NLL) of Gamma GLM from data
@@ -95,12 +59,34 @@ public:
     // and the corresponding weights using cross validation
     Eigen::VectorXd FitGlmCv();
     
+    // get functions
+    Eigen::MatrixXd get_predictor_matrix();
+    
+    Eigen::VectorXd get_response_vector();
+    
+    double get_alpha();
+    
+    int get_num_lambda();
+    
+    int get_glm_type();
+    
+    // set functions
+    void set_predictor_matrix(Eigen::MatrixXd M);
+    
+    void set_response_vector(Eigen::VectorXd V);
+    
+    void set_alpha(double x);
+    
+    void set_num_lambda(int x);
+    
+    void set_glm_type(int x);
+    
 private:
-    // A is the matrix of the independent variables
-    Eigen::MatrixXd A_;
+    // predictor_matrix_ is the matrix of the independent variables
+    Eigen::MatrixXd predictor_matrix_;
     
     // b is the vector of dependent variables
-    Eigen::VectorXd b_;
+    Eigen::VectorXd response_vector_;
     
     // alpha is the weight between L1 and L2 regularization, between 0 and 1.
     double alpha_;
