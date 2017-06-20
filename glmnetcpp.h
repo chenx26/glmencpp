@@ -20,31 +20,30 @@ class GlmNetCpp{
     
 public:
     // constructor
-    GlmNetCpp(Eigen::MatrixXd predictor_matrix, Eigen::VectorXd b, double alpha, int num_lambda, int glm_type);
+    GlmNetCpp(const Eigen::MatrixXd& predictor_matrix, 
+            const Eigen::VectorXd& response_vector, 
+            double alpha = 1, int num_lambda = 100, int glm_type = 1);
     
     // function to compute the negative log-likelihood (NLL) of exponential GLM from data
-    double exp_negative_log_likelihood(Eigen::VectorXd x);
+    double ExpNegativeLogLikelihood(const Eigen::VectorXd& x);
     
     // function to compute the gradient of the negative log-likelihood of exponential GLM
-    Eigen::VectorXd grad_exp_negative_log_likelihood(Eigen::VectorXd x);
-    Eigen::MatrixXd get_predictor_matrix() const {
-        return predictor_matrix_;
-    }
+    Eigen::VectorXd GradExpNegativeLogLikelihood(const Eigen::VectorXd& x);
 
         // function to compute the negative log-likelihood (NLL) of Gamma GLM from data
-    double GammaNegativeLogLikelihood(Eigen::VectorXd x);
+    double GammaNegativeLogLikelihood(const Eigen::VectorXd& x);
     
     // function to compute the gradient of the negative log-likelihood of Gamma GLM
-    Eigen::VectorXd GradGammaNegativeLogLikelihood(Eigen::VectorXd x);
+    Eigen::VectorXd GradGammaNegativeLogLikelihood(const Eigen::VectorXd& x);
     
     // function for the soft-thresholding operator, this is multi-dimensional
-    Eigen::VectorXd SoftThresholding(Eigen::VectorXd x);
+    Eigen::VectorXd SoftThresholding(const Eigen::VectorXd& x, double threshold);
     
     // function for the smooth part of the objective function
-    double SmoothObjFun(Eigen::VectorXd x);
+    double SmoothObjFun(const Eigen::VectorXd& x, double lambda);
     
     // function for the gradient of the smooth part of the objective function
-    Eigen::VectorXd GradSmoothObjFun(Eigen::VectorXd x);
+    Eigen::VectorXd GradSmoothObjFun(const Eigen::VectorXd& x, double lambda);
     
     // function for performing Proximal Gradient Descent (PGD)
     Eigen::VectorXd ProxGradDescent();
@@ -71,9 +70,9 @@ public:
     int get_glm_type();
     
     // set functions
-    void set_predictor_matrix(Eigen::MatrixXd M);
+    // void set_predictor_matrix(Eigen::MatrixXd M);
     
-    void set_response_vector(Eigen::VectorXd V);
+    // void set_response_vector(Eigen::VectorXd V);
     
     void set_alpha(double x);
     
@@ -83,10 +82,10 @@ public:
     
 private:
     // predictor_matrix_ is the matrix of the independent variables
-    Eigen::MatrixXd predictor_matrix_;
+    const Eigen::MatrixXd& predictor_matrix_;
     
     // b is the vector of dependent variables
-    Eigen::VectorXd response_vector_;
+    const Eigen::VectorXd& response_vector_;
     
     // alpha is the weight between L1 and L2 regularization, between 0 and 1.
     double alpha_;
