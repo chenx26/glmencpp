@@ -113,19 +113,19 @@ void GlmNetCpp::set_predictor_matrix(Eigen::MatrixXd M){
     predictor_matrix_ = M;
 }
 
-void set_response_vector(Eigen::VectorXd V){
+void GlmNetCpp::set_response_vector(Eigen::VectorXd V){
     response_vector_ = V;
 }
 
-void set_alpha(double x){
+void GlmNetCpp::set_alpha(double x){
     alpha_ = x;
 }
 
-void set_num_lambda(int x){
+void GlmNetCpp::set_num_lambda(int x){
     num_lambda_ = x;
 }
 
-void set_glm_type(int x){
+void GlmNetCpp::set_glm_type(int x){
     glm_type_ = x;
 }
 
