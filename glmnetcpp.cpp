@@ -79,14 +79,44 @@ double GlmNetCpp::SmoothObjFun(const Eigen::VectorXd& x, double lambda) {
 
 // function for the gradient of the smooth part of the objective function
 
-Eigen::VectorXd GlmNetCpp::GradSmoothObjFun(const Eigen::VectorXd& x, double lambda) {
+Eigen::VectorXd GlmNetCpp::GradSmoothObjFun(const Eigen::VectorXd& x, 
+        double lambda) {
     return GlmNetCpp::GradExpNegativeLogLikelihood(x) +
             (lambda * (1 - alpha_) * x.array()).matrix();
 }
 
 // function for performing Proximal Gradient Descent (PGD)
-Eigen::VectorXd GlmNetCpp::ProxGradDescent(){
-    return Eigen::VectorXd::Zero(3);
+// This is in fact based on the Fast Proximal gradient at
+// https://web.stanford.edu/~boyd/papers/prox_algs/lasso.html#9
+
+Eigen::VectorXd GlmNetCpp::ProxGradDescent(double lambda){
+    
+    double t = 1;
+    double beta = 0.5;
+    
+    int num_params = predictor_matrix_.cols();
+    
+    Eigen::VectorXd x = Eigen::VectorXd::Zero(num_params);
+    Eigen::VectorXd xprev = x;
+    
+    for(int k = 0; k < max_iter_; k++){
+        Eigen::VectorXd y = x + (k/(k+3)) * (x - xprev);
+        while(1){
+            Eigen::VectorXd grad_y = GradSmoothObjFun(y, lambda);
+            Eigen::VectorXd z = SoftThresholding(y - t * grad_y,
+                    t * lambda);
+            if (SmoothObjFun(z, lambda) <=
+                    SmoothObjFun(y, lambda) + 
+                    grad_y.transpose() * (z - y) +
+                    (1/(2*t)) * (z - y).squaredNorm()){
+                break;
+            }
+            t = beta * t;
+        }
+        xprev = x;
+        x = z;
+    }
+    return x;
 }
 
 // function for fitting GLM model given fixed lambda

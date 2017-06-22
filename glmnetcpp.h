@@ -22,7 +22,10 @@ public:
     // constructor
     GlmNetCpp(const Eigen::MatrixXd& predictor_matrix, 
             const Eigen::VectorXd& response_vector, 
-            double alpha = 1, int num_lambda = 100, int glm_type = 1);
+            double alpha = 1, int num_lambda = 100, int glm_type = 1,
+            int max_iter = 100, 
+            double abs_tol_ = 1.0e-4,
+            double rel_tol_ = 1.0e-2);
     
     // function to compute the negative log-likelihood (NLL) of exponential GLM from data
     double ExpNegativeLogLikelihood(const Eigen::VectorXd& x);
@@ -46,7 +49,7 @@ public:
     Eigen::VectorXd GradSmoothObjFun(const Eigen::VectorXd& x, double lambda);
     
     // function for performing Proximal Gradient Descent (PGD)
-    Eigen::VectorXd ProxGradDescent();
+    Eigen::VectorXd ProxGradDescent(double lambda);
     
     // function for fitting GLM model given fixed lambda
     Eigen::VectorXd FitGlmFixed();
@@ -97,6 +100,15 @@ private:
     // 1: Exponential
     // 2: Gamma
     int glm_type_;
+    
+    // max number of iterations for 
+    int max_iter_;
+    
+    // absolute tolerance
+    double abs_tol_;
+    
+    // relative tolerance
+    double rel_tol_;
 
 };
 
