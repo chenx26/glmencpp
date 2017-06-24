@@ -13,6 +13,7 @@
 
 #ifndef GLMNETCPP_H
 #define GLMNETCPP_H
+#include <iostream>
 #include <Eigen/Dense>
 
 class GlmNetCpp{
@@ -23,9 +24,9 @@ public:
     GlmNetCpp(const Eigen::MatrixXd& predictor_matrix, 
             const Eigen::VectorXd& response_vector, 
             double alpha = 1, int num_lambda = 100, int glm_type = 1,
-            int max_iter = 100, 
-            double abs_tol_ = 1.0e-4,
-            double rel_tol_ = 1.0e-2);
+            int max_iter = 10, 
+            double abs_tol = 1.0e-4,
+            double rel_tol = 1.0e-2);
     
     // function to compute the negative log-likelihood (NLL) of exponential GLM from data
     double ExpNegativeLogLikelihood(const Eigen::VectorXd& x);

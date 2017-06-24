@@ -8,12 +8,18 @@
 
 GlmNetCpp::GlmNetCpp(const Eigen::MatrixXd& predictor_matrix, 
         const Eigen::VectorXd& response_vector, double alpha,
-        int num_lambda, int glm_type): 
+        int num_lambda, int glm_type,
+        int max_iter,
+        double abs_tol,
+        double rel_tol): 
         predictor_matrix_(predictor_matrix),
         response_vector_(response_vector),
         alpha_(alpha),
         num_lambda_(num_lambda),
-        glm_type_(glm_type){
+        glm_type_(glm_type),
+        max_iter_(max_iter),
+        abs_tol_(abs_tol),
+        rel_tol_(rel_tol){
 //    predictor_matrix_ = A;
 //    response_vector_ = b;
 //    alpha_ = alpha;
@@ -98,20 +104,46 @@ Eigen::VectorXd GlmNetCpp::ProxGradDescent(double lambda){
     
     Eigen::VectorXd x = Eigen::VectorXd::Zero(num_params);
     Eigen::VectorXd xprev = x;
+    Eigen::VectorXd z;
     
     for(int k = 0; k < max_iter_; k++){
         Eigen::VectorXd y = x + (k/(k+3)) * (x - xprev);
+//        std::cout << "y = " << y << std::endl;
         while(1){
             Eigen::VectorXd grad_y = GradSmoothObjFun(y, lambda);
-            Eigen::VectorXd z = SoftThresholding(y - t * grad_y,
+            
+//            std::cout << "grad_y =" << grad_y << std::endl;
+            
+            z = SoftThresholding(y - t * grad_y,
                     t * lambda);
-            if (SmoothObjFun(z, lambda) <=
-                    SmoothObjFun(y, lambda) + 
-                    grad_y.transpose() * (z - y) +
-                    (1/(2*t)) * (z - y).squaredNorm()){
+//            std::cout << "z = " << z << std::endl;
+            
+            double lhs = SmoothObjFun(z, lambda);
+//            std::cout << "lhs =" << lhs << std::endl;
+            
+            double rhs1 = SmoothObjFun(y, lambda);
+//            std::cout << "rhs1 =" << rhs1 << std::endl;
+            
+            double rhs2 = grad_y.transpose() * (z - y);
+//            std::cout << "rhs2 =" << rhs2 << std::endl;
+            
+            double rhs3 = (1/(2*t)) * (z - y).squaredNorm();
+//            std::cout << "rhs3 =" << rhs3 << std::endl;
+//            
+//            std::cout << (lhs <= rhs1 +rhs2 + rhs3) << std::endl;
+            
+            if (lhs <=
+                    rhs1 + 
+                    rhs2 +
+                    rhs3){
+                std::cout << "breaking out" << std::endl;
                 break;
             }
+            
+//            std::cout << "t = " << t << std::endl;
+//            std::cout << "beta = " << beta << std::endl;
             t = beta * t;
+            
         }
         xprev = x;
         x = z;
