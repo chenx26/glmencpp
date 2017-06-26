@@ -32,8 +32,8 @@ int main()
 //    std::cout << test_glm.GradSmoothObjFun(init_sol, lambda) << std::endl;
     std::cout << Eigen::VectorXd::LinSpaced(5,0,1).maxCoeff() << std::endl;
 //    std::cout << test_glm.ProxGradDescent(lambda) << std::endl;
-    std::cout << test_glm.ComputeLambdaMax() << std::endl;
-    
+//    std::cout << (Eigen::VectorXd::LinSpaced(5, log(0.001), log(test_glm.ComputeLambdaMax()))).array().exp().transpose() << std::endl;
+    std::cout << test_glm.GenerateLambdaGrid() << std::endl;
     
 //  std::cout << ((m.array() - 1).sign()).matrix() << std::endl;
   

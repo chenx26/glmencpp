@@ -167,7 +167,8 @@ Eigen::VectorXd GlmNetCpp::FitGlmFixed(){
 
 // function for generating a grid of candidate lambdas
 Eigen::VectorXd GlmNetCpp::GenerateLambdaGrid(){
-    return Eigen::VectorXd::Zero(3);
+    double lambda_max = GlmNetCpp::ComputeLambdaMax();
+    return (Eigen::VectorXd::LinSpaced(num_lambda_, log(0.001), log(lambda_max))).array().exp();
 }
 
 // function for automatically choosing the optimal lambda 
