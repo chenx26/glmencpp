@@ -176,6 +176,11 @@ Eigen::VectorXd GlmNetCpp::FitGlmCv(){
     return Eigen::VectorXd::Zero(3);
 }
 
+// function to compute the smallest lambda that gives zero solution
+double GlmNetCpp::ComputeLambdaMax(){
+    return (((response_vector_.array() - 1).matrix().transpose() * predictor_matrix_).cwiseAbs()/alpha_).maxCoeff();
+}
+
 // get functions
 Eigen::MatrixXd GlmNetCpp::get_predictor_matrix(){
     return predictor_matrix_;

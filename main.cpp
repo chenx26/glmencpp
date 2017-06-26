@@ -30,7 +30,9 @@ int main()
 //    std::cout << test_glm.GradExpNegativeLogLikelihood(init_sol) << std::endl;
 //    std::cout << test_glm.SmoothObjFun(init_sol, lambda) << std::endl;
 //    std::cout << test_glm.GradSmoothObjFun(init_sol, lambda) << std::endl;
-    std::cout << test_glm.ProxGradDescent(lambda) << std::endl;
+    std::cout << Eigen::VectorXd::LinSpaced(5,0,1).maxCoeff() << std::endl;
+//    std::cout << test_glm.ProxGradDescent(lambda) << std::endl;
+    std::cout << test_glm.ComputeLambdaMax() << std::endl;
     
     
 //  std::cout << ((m.array() - 1).sign()).matrix() << std::endl;

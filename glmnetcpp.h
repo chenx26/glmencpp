@@ -63,6 +63,9 @@ public:
     // and the corresponding weights using cross validation
     Eigen::VectorXd FitGlmCv();
     
+    // function to compute the smallest lambda that gives zero solution
+    double ComputeLambdaMax();
+    
     // get functions
     Eigen::MatrixXd get_predictor_matrix();
     
