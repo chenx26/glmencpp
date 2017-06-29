@@ -6,27 +6,29 @@
 
 #include "glmnetcpp.h"
 
-GlmNetCpp::GlmNetCpp(const Eigen::MatrixXd& predictor_matrix, 
+GlmNetCpp::GlmNetCpp(const Eigen::MatrixXd& predictor_matrix,
         const Eigen::VectorXd& response_vector, double alpha,
         int num_lambda, int glm_type,
         int max_iter,
         double abs_tol,
         double rel_tol,
-        bool normalize_grad): 
-        predictor_matrix_(predictor_matrix),
-        response_vector_(response_vector),
-        alpha_(alpha),
-        num_lambda_(num_lambda),
-        glm_type_(glm_type),
-        max_iter_(max_iter),
-        abs_tol_(abs_tol),
-        rel_tol_(rel_tol),
-        normalize_grad_(normalize_grad){
-//    predictor_matrix_ = A;
-//    response_vector_ = b;
-//    alpha_ = alpha;
-//    num_lambda_ = num_lambda;
-//    glm_type_ = glm_type;
+        bool normalize_grad,
+        int k_fold) :
+predictor_matrix_(predictor_matrix),
+response_vector_(response_vector),
+alpha_(alpha),
+num_lambda_(num_lambda),
+glm_type_(glm_type),
+max_iter_(max_iter),
+abs_tol_(abs_tol),
+rel_tol_(rel_tol),
+normalize_grad_(normalize_grad),
+k_fold_(k_fold) {
+    //    predictor_matrix_ = A;
+    //    response_vector_ = b;
+    //    alpha_ = alpha;
+    //    num_lambda_ = num_lambda;
+    //    glm_type_ = glm_type;
 }
 
 double GlmNetCpp::ExpNegativeLogLikelihood(const Eigen::VectorXd& x) {
@@ -57,8 +59,8 @@ Eigen::VectorXd GlmNetCpp::GradExpNegativeLogLikelihood(const Eigen::VectorXd& x
 
     // the gradient of the response_vector__.transpose() * (-rs).array().exp().matrix() term
     grad += (-predictor_matrix_.transpose()) * ((-rs).array().exp().matrix()).cwiseProduct(response_vector_);
-    
-    if (normalize_grad_){
+
+    if (normalize_grad_) {
         return grad.normalized();
     }
     return grad;
@@ -66,12 +68,14 @@ Eigen::VectorXd GlmNetCpp::GradExpNegativeLogLikelihood(const Eigen::VectorXd& x
 }
 
 // function to compute the negative log-likelihood (NLL) of Gamma GLM from data
-double GlmNetCpp::GammaNegativeLogLikelihood(const Eigen::VectorXd& x){
+
+double GlmNetCpp::GammaNegativeLogLikelihood(const Eigen::VectorXd& x) {
     return 0;
 }
 
 // function to compute the gradient of the negative log-likelihood of Gamma GLM
-Eigen::VectorXd GradGammaNegativeLogLikelihood(const Eigen::VectorXd& x){
+
+Eigen::VectorXd GradGammaNegativeLogLikelihood(const Eigen::VectorXd& x) {
     return Eigen::VectorXd::Zero(3);
 }
 
@@ -90,7 +94,7 @@ double GlmNetCpp::SmoothObjFun(const Eigen::VectorXd& x, double lambda) {
 
 // function for the gradient of the smooth part of the objective function
 
-Eigen::VectorXd GlmNetCpp::GradSmoothObjFun(const Eigen::VectorXd& x, 
+Eigen::VectorXd GlmNetCpp::GradSmoothObjFun(const Eigen::VectorXd& x,
         double lambda) {
     return GlmNetCpp::GradExpNegativeLogLikelihood(x) +
             (lambda * (1 - alpha_) * x.array()).matrix();
@@ -100,57 +104,57 @@ Eigen::VectorXd GlmNetCpp::GradSmoothObjFun(const Eigen::VectorXd& x,
 // This is in fact based on the Fast Proximal gradient at
 // https://web.stanford.edu/~boyd/papers/prox_algs/lasso.html#9
 
-Eigen::VectorXd GlmNetCpp::ProxGradDescent(double lambda){
-    
+Eigen::VectorXd GlmNetCpp::ProxGradDescent(double lambda) {
+
     double t = 1;
     double beta = 0.5;
-    
+
     int num_params = predictor_matrix_.cols();
-    
+
     Eigen::VectorXd x = Eigen::VectorXd::Zero(num_params);
     Eigen::VectorXd xprev = x;
     Eigen::VectorXd z;
-    int k = 0; 
-    
-    while(k < max_iter_){
-        Eigen::VectorXd y = x + (k/(k+3)) * (x - xprev);
+    int k = 0;
+
+    while (k < max_iter_) {
+        Eigen::VectorXd y = x + (k / (k + 3)) * (x - xprev);
         std::cout << "y = " << y << std::endl;
-        while(1){
+        while (1) {
             Eigen::VectorXd grad_y = GradSmoothObjFun(y, lambda);
-            
+
             std::cout << "grad_y =" << grad_y << std::endl;
-            
+
             z = SoftThresholding(y - t * grad_y,
                     t * lambda * alpha_);
             std::cout << "z = " << z << std::endl;
-            
+
             double lhs = SmoothObjFun(z, lambda);
             std::cout << "lhs =" << lhs << std::endl;
-            
+
             double rhs1 = SmoothObjFun(y, lambda);
             std::cout << "rhs1 =" << rhs1 << std::endl;
-            
+
             double rhs2 = grad_y.transpose() * (z - y);
             std::cout << "rhs2 =" << rhs2 << std::endl;
-            
-            double rhs3 = (1/(2*t)) * (z - y).squaredNorm();
+
+            double rhs3 = (1 / (2 * t)) * (z - y).squaredNorm();
             std::cout << "rhs3 =" << rhs3 << std::endl;
-//            
-//            std::cout << (lhs <= rhs1 +rhs2 + rhs3) << std::endl;
-            
+            //            
+            //            std::cout << (lhs <= rhs1 +rhs2 + rhs3) << std::endl;
+
             if (lhs <=
-                    rhs1 + 
+                    rhs1 +
                     rhs2 +
-                    rhs3){
+                    rhs3) {
                 std::cout << "breaking out" << std::endl;
                 break;
             }
-            
+
 
             std::cout << "t = " << t << std::endl;
             std::cout << "beta = " << beta << std::endl;
             t = beta * t;
-            
+
         }
         xprev = x;
         x = z;
@@ -161,45 +165,110 @@ Eigen::VectorXd GlmNetCpp::ProxGradDescent(double lambda){
 }
 
 // function for fitting GLM model given fixed lambda
-Eigen::VectorXd GlmNetCpp::FitGlmFixed(){
+
+Eigen::VectorXd GlmNetCpp::FitGlmFixed() {
     return Eigen::VectorXd::Zero(3);
 }
 
 // function for generating a grid of candidate lambdas
-Eigen::VectorXd GlmNetCpp::GenerateLambdaGrid(){
+
+Eigen::VectorXd GlmNetCpp::GenerateLambdaGrid() {
     double lambda_max = GlmNetCpp::ComputeLambdaMax();
     return (Eigen::VectorXd::LinSpaced(num_lambda_, log(0.001), log(lambda_max))).array().exp();
 }
 
 // function for automatically choosing the optimal lambda 
 // and the corresponding weights using cross validation
-Eigen::VectorXd GlmNetCpp::FitGlmCv(){
+
+Eigen::VectorXd GlmNetCpp::FitGlmCv() {
     return Eigen::VectorXd::Zero(3);
 }
 
 // function to compute the smallest lambda that gives zero solution
-double GlmNetCpp::ComputeLambdaMax(){
-    return (((response_vector_.array() - 1).matrix().transpose() * predictor_matrix_).cwiseAbs()/alpha_).maxCoeff();
+
+double GlmNetCpp::ComputeLambdaMax() {
+    return (((response_vector_.array() - 1).matrix().transpose() * predictor_matrix_).cwiseAbs() / alpha_).maxCoeff();
+}
+
+// Generate training and testing sets for cross validation
+std::tuple<Eigen::MatrixXd, Eigen::MatrixXd,
+        Eigen::VectorXd, Eigen::VectorXd> GlmNetCpp::GenerateCvData(){
+    // number of observations
+    int num_obs = predictor_matrix_.rows();
+    
+    // number of variables
+    int num_vars = predictor_matrix_.cols();
+    
+    // genereate eigen::vector of 0 to num_obs - 1
+    Eigen::VectorXd idx1 = Eigen::VectorXd::LinSpaced(num_obs , 0, num_obs - 1);
+    
+    // convert eigen::vector to std::vector
+    std::vector<int> idx(idx1.data(), idx1.data() + idx1.size());
+    
+    // obtain a time-based seed:
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    
+    // shuffle the std::vector
+    shuffle (idx.begin(), idx.end(),std::default_random_engine(seed));
+    
+    // The training set contains (k_fold_-1)/k_fold_ of the data
+    int train_size = (k_fold_ - 1) / k_fold_ * num_obs;
+    std::vector<int> train_idx;
+    train_idx.resize(train_size);
+    for(int i = 0; i < train_size; i++){
+        train_idx[i] = idx[i];
+    }
+    
+    // Construct the training set of the predictor_matrix_ and response_vector_
+    Eigen::MatrixXd predictor_matrix_train;
+    Eigen::VectorXd response_vector_train;
+    predictor_matrix_train.resize(train_size, num_vars);
+    response_vector_train.resize(train_size);
+    for(int i = 0; i < train_size; i++){
+        predictor_matrix_train.row(i) = predictor_matrix_.row(train_idx[i]);
+        response_vector_train(i) = response_vector_(train_idx[i]);
+    }
+    
+    // The test set contains 1/k of the data
+    int test_size = num_obs - train_size;
+    std::vector<int> test_idx;
+    test_idx.resize(test_size);
+    for(int i = train_size; i < num_obs; i++){
+        test_idx[i] = idx[i];
+    }
+    
+    // Construct the test set of the predictor_matrix_ and response_vector_
+    Eigen::MatrixXd predictor_matrix_test;
+    Eigen::VectorXd response_vector_test;
+    predictor_matrix_test.resize(test_size, num_vars);
+    response_vector_test.resize(test_size);
+    for(int i = 0; i < test_size; i++){
+        predictor_matrix_test.row(i) = predictor_matrix_.row(test_idx[i]);
+        response_vector_test(i) = response_vector_(test_idx[i]);
+    }
+    return std::make_tuple(predictor_matrix_train, predictor_matrix_test,
+            response_vector_train, response_vector_test);
 }
 
 // get functions
-Eigen::MatrixXd GlmNetCpp::get_predictor_matrix(){
+
+Eigen::MatrixXd GlmNetCpp::get_predictor_matrix() {
     return predictor_matrix_;
 }
 
-Eigen::VectorXd GlmNetCpp::get_response_vector(){
+Eigen::VectorXd GlmNetCpp::get_response_vector() {
     return response_vector_;
 }
 
-double GlmNetCpp::get_alpha(){
+double GlmNetCpp::get_alpha() {
     return alpha_;
 }
 
-int GlmNetCpp::get_num_lambda(){
+int GlmNetCpp::get_num_lambda() {
     return num_lambda_;
 }
 
-int GlmNetCpp::get_glm_type(){
+int GlmNetCpp::get_glm_type() {
     return glm_type_;
 }
 
@@ -212,15 +281,15 @@ int GlmNetCpp::get_glm_type(){
 //    response_vector_ = V;
 //}
 
-void GlmNetCpp::set_alpha(double x){
+void GlmNetCpp::set_alpha(double x) {
     alpha_ = x;
 }
 
-void GlmNetCpp::set_num_lambda(int x){
+void GlmNetCpp::set_num_lambda(int x) {
     num_lambda_ = x;
 }
 
-void GlmNetCpp::set_glm_type(int x){
+void GlmNetCpp::set_glm_type(int x) {
     glm_type_ = x;
 }
 

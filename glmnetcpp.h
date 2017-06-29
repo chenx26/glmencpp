@@ -14,6 +14,11 @@
 #ifndef GLMNETCPP_H
 #define GLMNETCPP_H
 #include <iostream>
+#include <tuple>        // std::make_tuple
+#include <algorithm>    // std::shuffle
+#include <array>        // std::array
+#include <random>       // std::default_random_engine
+#include <chrono>       // std::chrono::system_clock
 #include <Eigen/Dense>
 
 class GlmNetCpp{
@@ -27,7 +32,8 @@ public:
             int max_iter = 100, 
             double abs_tol = 1.0e-4,
             double rel_tol = 1.0e-2,
-            bool normalize_grda = true);
+            bool normalize_grda = true,
+            int k_fold = 5);
     
     // function to compute the negative log-likelihood (NLL) of exponential GLM from data
     double ExpNegativeLogLikelihood(const Eigen::VectorXd& x);
@@ -65,6 +71,10 @@ public:
     
     // function to compute the smallest lambda that gives zero solution
     double ComputeLambdaMax();
+    
+    // Generate training and testing sets for cross validation
+    std::tuple<Eigen::MatrixXd, Eigen::MatrixXd,
+        Eigen::VectorXd, Eigen::VectorXd> GenerateCvData();
     
     // get functions
     Eigen::MatrixXd get_predictor_matrix();
@@ -117,6 +127,9 @@ private:
     
     // switch for normalizing the gradient
     bool normalize_grad_;
+    
+    // number of folds for cross validation
+    int k_fold_;
 
 };
 
