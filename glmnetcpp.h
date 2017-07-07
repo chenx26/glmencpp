@@ -14,11 +14,6 @@
 #ifndef GLMNETCPP_H
 #define GLMNETCPP_H
 #include <iostream>
-#include <tuple>        // std::make_tuple
-#include <algorithm>    // std::shuffle
-#include <array>        // std::array
-#include <random>       // std::default_random_engine
-#include <chrono>       // std::chrono::system_clock
 #include <Eigen/Dense>
 
 class GlmNetCpp{
@@ -28,12 +23,11 @@ public:
     // constructor
     GlmNetCpp(const Eigen::MatrixXd& predictor_matrix, 
             const Eigen::VectorXd& response_vector, 
-            double alpha = 1, int num_lambda = 100, int glm_type = 1,
+            double alpha = 1, int glm_type = 1,
             int max_iter = 100, 
             double abs_tol = 1.0e-4,
             double rel_tol = 1.0e-2,
-            bool normalize_grda = true,
-            int k_fold = 5);
+            bool normalize_grda = true);
     
     // function to compute the negative log-likelihood (NLL) of exponential GLM from data
     double ExpNegativeLogLikelihood(const Eigen::VectorXd& x);
@@ -59,31 +53,12 @@ public:
     // function for performing Proximal Gradient Descent (PGD)
     Eigen::VectorXd ProxGradDescent(double lambda);
     
-    // function for fitting GLM model given fixed lambda
-    Eigen::VectorXd FitGlmFixed();
-    
-    // function for generating a grid of candidate lambdas
-    Eigen::VectorXd GenerateLambdaGrid();
-    
-    // function for automatically choosing the optimal lambda 
-    // and the corresponding weights using cross validation
-    Eigen::VectorXd FitGlmCv();
-    
-    // function to compute the smallest lambda that gives zero solution
-    double ComputeLambdaMax();
-    
-    // Generate training and testing sets for cross validation
-    std::tuple<Eigen::MatrixXd, Eigen::MatrixXd,
-        Eigen::VectorXd, Eigen::VectorXd> GenerateCvData();
-    
     // get functions
     Eigen::MatrixXd get_predictor_matrix();
     
     Eigen::VectorXd get_response_vector();
     
     double get_alpha();
-    
-    int get_num_lambda();
     
     int get_glm_type();
     
@@ -93,8 +68,6 @@ public:
     // void set_response_vector(Eigen::VectorXd V);
     
     void set_alpha(double x);
-    
-    void set_num_lambda(int x);
     
     void set_glm_type(int x);
     
@@ -107,9 +80,6 @@ private:
     
     // alpha is the weight between L1 and L2 regularization, between 0 and 1.
     double alpha_;
-    
-    // num_lambda is the number of lambdas for the search grid
-    int num_lambda_;
     
     // type of GLM
     // 1: Exponential
@@ -127,9 +97,6 @@ private:
     
     // switch for normalizing the gradient
     bool normalize_grad_;
-    
-    // number of folds for cross validation
-    int k_fold_;
 
 };
 
