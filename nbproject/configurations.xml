@@ -4,8 +4,8 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>GlmNetCpp.h</itemPath>
       <itemPath>GlmNetCvCpp.hpp</itemPath>
-      <itemPath>glmnetcpp.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -14,8 +14,8 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>GlmNetCpp.cpp</itemPath>
       <itemPath>GlmNetCvCpp.cpp</itemPath>
-      <itemPath>glmnetcpp.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -51,6 +51,10 @@
           </linkerDynSerch>
         </linkerTool>
       </compileType>
+      <item path="GlmNetCpp.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GlmNetCpp.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="GlmNetCvCpp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GlmNetCvCpp.hpp" ex="false" tool="3" flavor2="0">
@@ -65,10 +69,6 @@
           </linkerDynSerch>
         </linkerTool>
       </folder>
-      <item path="glmnetcpp.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="glmnetcpp.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
@@ -101,6 +101,10 @@
           </linkerDynSerch>
         </linkerTool>
       </compileType>
+      <item path="GlmNetCpp.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GlmNetCpp.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="GlmNetCvCpp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="GlmNetCvCpp.hpp" ex="false" tool="3" flavor2="0">
@@ -115,10 +119,6 @@
           </linkerDynSerch>
         </linkerTool>
       </folder>
-      <item path="glmnetcpp.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="glmnetcpp.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>

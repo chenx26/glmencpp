@@ -11,14 +11,14 @@
  * Created on July 6, 2017, 5:07 PM
  */
 
-#ifndef GLMNETCVCPP_HPP
-#define GLMNETCVCPP_HPP
+#ifndef GLMNETCVCPP_H
+#define GLMNETCVCPP_H
 #include <tuple>        // std::make_tuple
 #include <algorithm>    // std::shuffle
 #include <array>        // std::array
 #include <random>       // std::default_random_engine
 #include <chrono>       // std::chrono::system_clock
-#include "glmnetcpp.h"
+#include "GlmNetCpp.h"
 
 class GlmNetCvCpp {
 public:
@@ -78,7 +78,14 @@ private:
     
     // number of folds for cross validation
     int k_fold_;
+    
+    // struct for the results of the cross validation for each fixed lambda
+    struct CvResult{
+        Eigen::VectorXd coeffs;
+        double estimated_error;
+        double lambda;
+    };
 };
 
-#endif /* GLMNETCVCPP_HPP */
+#endif /* GLMNETCVCPP_H */
 

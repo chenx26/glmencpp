@@ -2,7 +2,7 @@
 // #include <iostream>
 // #include <Eigen/Dense>
 // #include "glmnetcpp.h"
-#include "GlmNetCvCpp.hpp"
+#include "GlmNetCvCpp.h"
 
 int main()
 {

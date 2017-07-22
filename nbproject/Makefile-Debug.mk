@@ -35,8 +35,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/GlmNetCpp.o \
 	${OBJECTDIR}/GlmNetCvCpp.o \
-	${OBJECTDIR}/glmnetcpp.o \
 	${OBJECTDIR}/main.o
 
 
@@ -64,15 +64,15 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/glmnetcpp: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/glmnetcpp ${OBJECTFILES} ${LDLIBSOPTIONS}
 
+${OBJECTDIR}/GlmNetCpp.o: GlmNetCpp.cpp
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GlmNetCpp.o GlmNetCpp.cpp
+
 ${OBJECTDIR}/GlmNetCvCpp.o: GlmNetCvCpp.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/GlmNetCvCpp.o GlmNetCvCpp.cpp
-
-${OBJECTDIR}/glmnetcpp.o: glmnetcpp.cpp
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/glmnetcpp.o glmnetcpp.cpp
 
 ${OBJECTDIR}/main.o: main.cpp
 	${MKDIR} -p ${OBJECTDIR}

@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-#include "glmnetcpp.h"
+#include "GlmNetCpp.h"
 
 GlmNetCpp::GlmNetCpp(const Eigen::MatrixXd& predictor_matrix,
         const Eigen::VectorXd& response_vector, double alpha,

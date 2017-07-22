@@ -11,7 +11,7 @@
  * Created on July 6, 2017, 5:07 PM
  */
 
-#include "GlmNetCvCpp.hpp"
+#include "GlmNetCvCpp.h"
 
 GlmNetCvCpp::GlmNetCvCpp(const Eigen::MatrixXd& predictor_matrix,
         const Eigen::VectorXd& response_vector, double alpha,
@@ -55,6 +55,60 @@ Eigen::VectorXd GlmNetCvCpp::GenerateLambdaGrid() {
 // and the corresponding weights using cross validation
 
 Eigen::VectorXd GlmNetCvCpp::FitGlmCv() {
+    //  generate lambda grid
+    Eigen::VectorXd lambda_grid = GenerateLambdaGrid();
+    
+    // initialize vectors to store cv results
+    std::vector<CvResult> cv_result;
+    
+    //  for each lambda in lambda grid, run k_fold cv
+    for(int i = 0; i < lambda_grid.size(); i++){
+        
+        //  generate training and testing data sets
+        Eigen::MatrixXd predictor_matrix_train;
+        Eigen::VectorXd response_vector_train;
+        Eigen::MatrixXd predictor_matrix_test;
+        Eigen::VectorXd response_vector_test;
+
+        std::tie(predictor_matrix_train,
+                predictor_matrix_test,
+                response_vector_train,
+                response_vector_test) = GenerateCvData();
+        
+        // construct an GlmNetCpp object using training data
+        GlmNetCpp::GlmNetCpp my_glm(predictor_matrix_train, 
+            response_vector_train, 
+            alpha_, 
+            glm_type_,
+            max_iter_, 
+            abs_tol_,
+            rel_tol_,
+            normalize_grad_);
+        
+        // find the optimal coefficients using training data
+        Eigen::VectorXd training_coeffs = my_glm.ProxGradDescent(lambda_grid(i));
+        
+        // use training_coeffs on the predictor_matrix_test
+        // to get the predicted responses
+        Eigen::VectorXd response_vector_predicted = my_glm.Predict(predictor_matrix_test);
+        
+        // compute the error of the predicted response vector versus the test response vector
+        double error = (response_vector_predicted - response_vector_test).norm();
+        
+        // create structure for the results
+        CvResult tmp;
+        tmp.coeffs = training_coeffs;
+        tmp.lambda = lambda_grid(i);
+        tmp.estimated_error = error;
+        
+        // save the results
+        cv_result.push_back(tmp);
+    }
+        
+        //  use training set to train the model
+        //  use testing set to estimate the prediction error
+        //  save the fitted model and the corresponding prediction error
+    //  find the best model with the smallest prediction error
 //    double rmse = 0;
 //    for (int k = 0; k < k_fold_; k++) {
 //        Eigen::MatrixXd predictor_matrix_train;
