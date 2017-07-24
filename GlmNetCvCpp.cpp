@@ -57,78 +57,79 @@ Eigen::VectorXd GlmNetCvCpp::GenerateLambdaGrid() {
 Eigen::VectorXd GlmNetCvCpp::FitGlmCv() {
     //  generate lambda grid
     Eigen::VectorXd lambda_grid = GenerateLambdaGrid();
-    
-    // initialize vectors to store cv results
-    std::vector<CvResult> cv_result;
-    
-    //  for each lambda in lambda grid, run k_fold cv
-    for(int i = 0; i < lambda_grid.size(); i++){
-        
-        //  generate training and testing data sets
-        Eigen::MatrixXd predictor_matrix_train;
-        Eigen::VectorXd response_vector_train;
-        Eigen::MatrixXd predictor_matrix_test;
-        Eigen::VectorXd response_vector_test;
 
-        std::tie(predictor_matrix_train,
-                predictor_matrix_test,
-                response_vector_train,
-                response_vector_test) = GenerateCvData();
+    // initialize vectors to store cv results
+    std::vector<double> predicted_errors;
+
+    //  for each lambda in lambda grid
+    for (int i = 0; i < lambda_grid.size(); i++) {
         
-        // construct an GlmNetCpp object using training data
-        GlmNetCpp::GlmNetCpp my_glm(predictor_matrix_train, 
-            response_vector_train, 
-            alpha_, 
-            glm_type_,
-            max_iter_, 
-            abs_tol_,
-            rel_tol_,
-            normalize_grad_);
+        double error = 0;
+
+        // run k_fold cv
+        for (int cv_iter = 0; cv_iter < k_fold_; cv_iter++) {
+            //  generate training and testing data sets
+            Eigen::MatrixXd predictor_matrix_train;
+            Eigen::VectorXd response_vector_train;
+            Eigen::MatrixXd predictor_matrix_test;
+            Eigen::VectorXd response_vector_test;
+
+            std::tie(predictor_matrix_train,
+                    predictor_matrix_test,
+                    response_vector_train,
+                    response_vector_test) = GenerateCvData();
+
+            // construct an GlmNetCpp object using training data
+            GlmNetCpp::GlmNetCpp my_glm(predictor_matrix_train,
+                    response_vector_train,
+                    alpha_,
+                    glm_type_,
+                    max_iter_,
+                    abs_tol_,
+                    rel_tol_,
+                    normalize_grad_);
+
+            // find the optimal coefficients using training data
+            Eigen::VectorXd training_coeffs = my_glm.ProxGradDescent(lambda_grid(i));
+
+            // use training_coeffs on the predictor_matrix_test
+            // to get the predicted responses
+            Eigen::VectorXd response_vector_predicted = my_glm.Predict(predictor_matrix_test,
+                    training_coeffs);
+
+            // compute the error of the predicted response vector versus the test response vector
+            error += (response_vector_predicted - response_vector_test).norm();
+
+        }
         
-        // find the optimal coefficients using training data
-        Eigen::VectorXd training_coeffs = my_glm.ProxGradDescent(lambda_grid(i));
-        
-        // use training_coeffs on the predictor_matrix_test
-        // to get the predicted responses
-        Eigen::VectorXd response_vector_predicted = my_glm.Predict(predictor_matrix_test);
-        
-        // compute the error of the predicted response vector versus the test response vector
-        double error = (response_vector_predicted - response_vector_test).norm();
-        
-        // create structure for the results
-        CvResult tmp;
-        tmp.coeffs = training_coeffs;
-        tmp.lambda = lambda_grid(i);
-        tmp.estimated_error = error;
-        
+        error = error / k_fold_;
+
         // save the results
-        cv_result.push_back(tmp);
+        predicted_errors.push_back(error);
     }
-        
-        //  use training set to train the model
-        //  use testing set to estimate the prediction error
-        //  save the fitted model and the corresponding prediction error
-    //  find the best model with the smallest prediction error
-//    double rmse = 0;
-//    for (int k = 0; k < k_fold_; k++) {
-//        Eigen::MatrixXd predictor_matrix_train;
-//        Eigen::VectorXd response_vector_train;
-//        Eigen::MatrixXd predictor_matrix_test;
-//        Eigen::VectorXd response_vector_test;
-//
-//        std::tie(predictor_matrix_train,
-//                predictor_matrix_test,
-//                response_vector_train,
-//                response_vector_test) = GenerateCvData();
-//
-//        ProxGradDescent(lambda)
-//
-//
-//
-//    }
-//
-//    return std::make_tuple(Eigen::VectorXd::Zero(3), rmse);
-    return Eigen::VectorXd::Zero(3);
+    
+    // find the lambda corresponding to the smallest predicted_error
+    int min_pos = 0;
+    for(int i = 1; i < predicted_errors.size(); i++){
+        if (predicted_errors[min_pos] > predicted_errors[i]){
+            min_pos = i;
+        }
+    }
+    
+    double best_lambda = lambda_grid(min_pos);
+    
+    // train the model using the best_lambda and entire training set
+                GlmNetCpp::GlmNetCpp my_glm(predictor_matrix_,
+                    response_vector_,
+                    alpha_,
+                    glm_type_,
+                    max_iter_,
+                    abs_tol_,
+                    rel_tol_,
+                    normalize_grad_);
+                Eigen::VectorXd best_coeffs = my_glm.ProxGradDescent(best_lambda);
+    
+    return best_coeffs;
 }
 
 // function to compute the smallest lambda that gives zero solution

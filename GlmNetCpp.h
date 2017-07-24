@@ -53,6 +53,11 @@ public:
     // function for performing Proximal Gradient Descent (PGD)
     Eigen::VectorXd ProxGradDescent(double lambda);
     
+    // function to computed the predicted response_vector given the vector of coeffcicients
+    // and the predictor_matrix
+    Eigen::VectorXd Predict(const Eigen::MatrixXd& predictor_matrix_test, 
+        const Eigen::VectorXd& training_coefficients);
+    
     // get functions
     Eigen::MatrixXd get_predictor_matrix();
     

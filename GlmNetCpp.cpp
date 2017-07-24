@@ -20,7 +20,7 @@ glm_type_(glm_type),
 max_iter_(max_iter),
 abs_tol_(abs_tol),
 rel_tol_(rel_tol),
-normalize_grad_(normalize_grad){
+normalize_grad_(normalize_grad) {
     //    predictor_matrix_ = A;
     //    response_vector_ = b;
     //    alpha_ = alpha;
@@ -159,6 +159,14 @@ Eigen::VectorXd GlmNetCpp::ProxGradDescent(double lambda) {
     }
     std::cout << "num_iter = " << k << std::endl;
     return x;
+}
+
+// function to computed the predicted response_vector given the vector of coefficients
+// and the predictor_matrix
+Eigen::VectorXd GlmNetCpp::Predict(const Eigen::MatrixXd& predictor_matrix_test,
+        const Eigen::VectorXd& training_coefficients){
+    Eigen::VectorXd res = (predictor_matrix_test * training_coefficients).array().exp();
+    return res;
 }
 
 // get functions

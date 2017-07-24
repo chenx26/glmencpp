@@ -80,11 +80,10 @@ private:
     int k_fold_;
     
     // struct for the results of the cross validation for each fixed lambda
-    struct CvResult{
-        Eigen::VectorXd coeffs;
-        double estimated_error;
-        double lambda;
-    };
+//    struct CvResult{
+//        double estimated_error;
+//        double lambda;
+//    };
 };
 
 #endif /* GLMNETCVCPP_H */
