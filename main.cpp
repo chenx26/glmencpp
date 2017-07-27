@@ -6,8 +6,8 @@
 
 int main()
 {
-    int num_obs = 10;
-    int num_params = 3;
+    int num_obs = 10000;
+    int num_params = 7;
     double lambda = 1;
     double alpha = 0.5;
     Eigen::MatrixXd predictor_matrix = Eigen::MatrixXd::Random(num_obs, num_params);
@@ -32,6 +32,13 @@ int main()
     std::cout << test_glm.GradSmoothObjFun(init_sol, lambda) << std::endl;
     std::cout << Eigen::VectorXd::LinSpaced(5,0,1).maxCoeff() << std::endl;
     std::cout << test_glm.ProxGradDescent(lambda) << std::endl;
+
+//  code to test the GlmNetCvCpp functions
+    GlmNetCvCpp test_glm_cv(predictor_matrix, response_vector, alpha);
+    std::cout << test_glm_cv.FitGlmCv() << std::endl;
+    
+    
+    
 //    std::cout << (Eigen::VectorXd::LinSpaced(5, log(0.001), log(test_glm.ComputeLambdaMax()))).array().exp().transpose() << std::endl;
 //    std::cout << test_glm.GenerateLambdaGrid() << std::endl;
     

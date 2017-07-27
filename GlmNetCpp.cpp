@@ -115,27 +115,27 @@ Eigen::VectorXd GlmNetCpp::ProxGradDescent(double lambda) {
 
     while (k < max_iter_) {
         Eigen::VectorXd y = x + (k / (k + 3)) * (x - xprev);
-        std::cout << "y = " << y << std::endl;
+//         std::cout << "y = " << y << std::endl;
         while (1) {
             Eigen::VectorXd grad_y = GradSmoothObjFun(y, lambda);
 
-            std::cout << "grad_y =" << grad_y << std::endl;
+//            std::cout << "grad_y =" << grad_y << std::endl;
 
             z = SoftThresholding(y - t * grad_y,
                     t * lambda * alpha_);
-            std::cout << "z = " << z << std::endl;
+//            std::cout << "z = " << z << std::endl;
 
             double lhs = SmoothObjFun(z, lambda);
-            std::cout << "lhs =" << lhs << std::endl;
+//            std::cout << "lhs =" << lhs << std::endl;
 
             double rhs1 = SmoothObjFun(y, lambda);
-            std::cout << "rhs1 =" << rhs1 << std::endl;
+//            std::cout << "rhs1 =" << rhs1 << std::endl;
 
             double rhs2 = grad_y.transpose() * (z - y);
-            std::cout << "rhs2 =" << rhs2 << std::endl;
+//            std::cout << "rhs2 =" << rhs2 << std::endl;
 
             double rhs3 = (1 / (2 * t)) * (z - y).squaredNorm();
-            std::cout << "rhs3 =" << rhs3 << std::endl;
+//            std::cout << "rhs3 =" << rhs3 << std::endl;
             //            
             //            std::cout << (lhs <= rhs1 +rhs2 + rhs3) << std::endl;
 
@@ -143,13 +143,13 @@ Eigen::VectorXd GlmNetCpp::ProxGradDescent(double lambda) {
                     rhs1 +
                     rhs2 +
                     rhs3) {
-                std::cout << "breaking out" << std::endl;
+//                std::cout << "breaking out" << std::endl;
                 break;
             }
 
 
-            std::cout << "t = " << t << std::endl;
-            std::cout << "beta = " << beta << std::endl;
+//            std::cout << "t = " << t << std::endl;
+//           std::cout << "beta = " << beta << std::endl;
             t = beta * t;
 
         }
