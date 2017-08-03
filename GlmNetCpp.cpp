@@ -40,10 +40,10 @@ double GlmNetCpp::ExpNegativeLogLikelihood(const Eigen::VectorXd& x) {
 
 Eigen::VectorXd GlmNetCpp::GradExpNegativeLogLikelihood(const Eigen::VectorXd& x) {
     // number of variables
-    int p = predictor_matrix_.cols();
+    int p = static_cast<int>(predictor_matrix_.cols());
 
     // number of observations
-    int n = predictor_matrix_.rows();
+    int n = static_cast<int>(predictor_matrix_.rows());
 
     // create vector of n 1s
     Eigen::VectorXd my_ones = Eigen::VectorXd::Ones(n);
@@ -106,7 +106,7 @@ Eigen::VectorXd GlmNetCpp::ProxGradDescent(double lambda) {
     double t = 1;
     double beta = 0.5;
 
-    int num_params = predictor_matrix_.cols();
+    int num_params = static_cast<int>(predictor_matrix_.cols());
 
     Eigen::VectorXd x = Eigen::VectorXd::Zero(num_params);
     Eigen::VectorXd xprev = x;

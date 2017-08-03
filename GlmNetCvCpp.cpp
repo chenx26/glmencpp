@@ -80,7 +80,7 @@ Eigen::VectorXd GlmNetCvCpp::FitGlmCv() {
                     response_vector_test) = GenerateCvData();
 
             // construct an GlmNetCpp object using training data
-            GlmNetCpp::GlmNetCpp my_glm(predictor_matrix_train,
+            GlmNetCpp my_glm(predictor_matrix_train,
                     response_vector_train,
                     alpha_,
                     glm_type_,
@@ -119,7 +119,7 @@ Eigen::VectorXd GlmNetCvCpp::FitGlmCv() {
     double best_lambda = lambda_grid(min_pos);
     
     // train the model using the best_lambda and entire training set
-                GlmNetCpp::GlmNetCpp my_glm(predictor_matrix_,
+                GlmNetCpp my_glm(predictor_matrix_,
                     response_vector_,
                     alpha_,
                     glm_type_,
@@ -143,19 +143,19 @@ double GlmNetCvCpp::ComputeLambdaMax() {
 std::tuple<Eigen::MatrixXd, Eigen::MatrixXd,
 Eigen::VectorXd, Eigen::VectorXd> GlmNetCvCpp::GenerateCvData() {
     // number of observations
-    int num_obs = predictor_matrix_.rows();
+    int num_obs = static_cast<int>(predictor_matrix_.rows());
 
     // number of variables
-    int num_vars = predictor_matrix_.cols();
+    int num_vars = static_cast<int>(predictor_matrix_.cols());
 
     // genereate eigen::vector of 0 to num_obs - 1
-    Eigen::VectorXd idx1 = Eigen::VectorXd::LinSpaced(num_obs, 0, num_obs - 1);
+    Eigen::VectorXi idx1 = Eigen::VectorXi::LinSpaced(num_obs, 0, num_obs - 1);
 
     // convert eigen::vector to std::vector
     std::vector<int> idx(idx1.data(), idx1.data() + idx1.size());
 
     // obtain a time-based seed:
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    unsigned seed = static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count());
 
     // shuffle the std::vector
     shuffle(idx.begin(), idx.end(), std::default_random_engine(seed));
