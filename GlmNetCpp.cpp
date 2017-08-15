@@ -157,7 +157,7 @@ Eigen::VectorXd GlmNetCpp::ProxGradDescent(double lambda) {
         x = z;
         k++;
     }
-    std::cout << "num_iter = " << k << std::endl;
+//    std::cout << "num_iter = " << k << std::endl;
     return x;
 }
 

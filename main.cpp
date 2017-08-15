@@ -6,8 +6,8 @@
 
 int main()
 {
-    int num_obs = 10000;
-    int num_params = 7;
+    int num_obs = 10;
+    int num_params = 3;
     double lambda = 1;
     double alpha = 0.5;
     Eigen::MatrixXd predictor_matrix = Eigen::MatrixXd::Random(num_obs, num_params);
