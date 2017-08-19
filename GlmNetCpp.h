@@ -24,10 +24,10 @@ public:
     GlmNetCpp(const Eigen::MatrixXd& predictor_matrix, 
             const Eigen::VectorXd& response_vector, 
             double alpha = 1, int glm_type = 1,
-            int max_iter = 100, 
+            int max_iter = 1000, 
             double abs_tol = 1.0e-4,
             double rel_tol = 1.0e-2,
-            bool normalize_grda = true);
+            bool normalize_grad = true);
     
     // function to compute the negative log-likelihood (NLL) of exponential GLM from data
     double ExpNegativeLogLikelihood(const Eigen::VectorXd& x);

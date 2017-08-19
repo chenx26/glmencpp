@@ -25,7 +25,7 @@ public:
         GlmNetCvCpp(const Eigen::MatrixXd& predictor_matrix, 
             const Eigen::VectorXd& response_vector, 
             double alpha = 1, int num_lambda = 100, int glm_type = 1,
-            int max_iter = 100, 
+            int max_iter = 1000, 
             double abs_tol = 1.0e-4,
             double rel_tol = 1.0e-2,
             bool normalize_grda = true,

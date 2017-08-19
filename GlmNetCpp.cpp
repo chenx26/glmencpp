@@ -40,7 +40,7 @@ double GlmNetCpp::ExpNegativeLogLikelihood(const Eigen::VectorXd& x) {
 
 Eigen::VectorXd GlmNetCpp::GradExpNegativeLogLikelihood(const Eigen::VectorXd& x) {
     // number of variables
-    int p = static_cast<int>(predictor_matrix_.cols());
+    // int p = static_cast<int>(predictor_matrix_.cols());
 
     // number of observations
     int n = static_cast<int>(predictor_matrix_.rows());

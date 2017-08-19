@@ -31,6 +31,7 @@ int main()
     std::cout << test_glm.SmoothObjFun(init_sol, lambda) << std::endl;
     std::cout << test_glm.GradSmoothObjFun(init_sol, lambda) << std::endl;
     std::cout << Eigen::VectorXd::LinSpaced(5,0,1).maxCoeff() << std::endl;
+    std::cout << test_glm.SoftThresholding(init_sol, 0.5) << std::endl;
     std::cout << test_glm.ProxGradDescent(lambda) << std::endl;
 
 //  code to test the GlmNetCvCpp functions
