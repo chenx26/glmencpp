@@ -76,25 +76,30 @@ Eigen::VectorXd GradGammaNegativeLogLikelihood(const Eigen::VectorXd& x) {
     return Eigen::VectorXd::Zero(3);
 }
 
-// function for the soft-thresholding operator, this is multi-dimensional
+// function for the prox of L1 regularizer,
+// which is soft-thresholding operator, 
+// this is multi-dimensional
 
-Eigen::VectorXd GlmNetCpp::SoftThresholding(const Eigen::VectorXd& x, double threshold) {
+Eigen::VectorXd GlmNetCpp::prox_L1(const Eigen::VectorXd& x, double threshold) {
     return ((abs(x.array()) - threshold).max(0) * x.array().sign()).matrix();
 }
 
 // function for the smooth part of the objective function
 
-double GlmNetCpp::SmoothObjFun(const Eigen::VectorXd& x, double lambda) {
-    return GlmNetCpp::ExpNegativeLogLikelihood(x) +
-            lambda * (1 - alpha_) / 2 * x.squaredNorm();
+double GlmNetCpp::SmoothObjFun(const Eigen::VectorXd& x) {
+    if (glm_type_ == 1)
+        return GlmNetCpp::ExpNegativeLogLikelihood(x);
+    if (glm_type_ == 2)
+        return GlmNetCpp::GammaNegativeLogLikelihood(x);
 }
 
 // function for the gradient of the smooth part of the objective function
 
-Eigen::VectorXd GlmNetCpp::GradSmoothObjFun(const Eigen::VectorXd& x,
-        double lambda) {
-    return GlmNetCpp::GradExpNegativeLogLikelihood(x) +
-            (lambda * (1 - alpha_) * x.array()).matrix();
+Eigen::VectorXd GlmNetCpp::GradSmoothObjFun(const Eigen::VectorXd& x) {
+    if (glm_type_ == 1)
+        return GlmNetCpp::GradExpNegativeLogLikelihood(x);
+    if (glm_type_ == 2)
+        return GlmNetCpp::GradGammaNegativeLogLikelihood(x);
 }
 
 // function for performing Proximal Gradient Descent (PGD)
