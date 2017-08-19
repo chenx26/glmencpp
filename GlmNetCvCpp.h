@@ -28,7 +28,7 @@ public:
             int max_iter = 1000, 
             double abs_tol = 1.0e-4,
             double rel_tol = 1.0e-2,
-            bool normalize_grda = true,
+            bool normalize_grda = false,
             int k_fold = 5);
             // function for fitting GLM model given fixed lambda
     Eigen::VectorXd FitGlmFixed();
