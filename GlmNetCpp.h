@@ -42,7 +42,17 @@ public:
     Eigen::VectorXd GradGammaNegativeLogLikelihood(const Eigen::VectorXd& x);
     
     // function for the soft-thresholding operator, this is multi-dimensional
-    Eigen::VectorXd SoftThresholding(const Eigen::VectorXd& x, double threshold);
+    Eigen::VectorXd prox_L1(const Eigen::VectorXd& x, double threshold);
+    
+    // function to compute the value of the entire objective function
+    // f(x) + lambda * regularizers
+    double ObjFun(const Eigen::VectorXd& x, double lambda);
+    
+        // function for the L1 regularizer
+    double regularizer_L1(const Eigen::VectorXd& x);
+    
+    // function for the ENet regularizer
+    double regularizer_ENet(const Eigen::VectorXd& x);
     
     // function for the smooth part of the objective function
     double SmoothObjFun(const Eigen::VectorXd& x, double lambda);

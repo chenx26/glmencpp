@@ -84,6 +84,22 @@ Eigen::VectorXd GlmNetCpp::prox_L1(const Eigen::VectorXd& x, double threshold) {
     return ((abs(x.array()) - threshold).max(0) * x.array().sign()).matrix();
 }
 
+// function for the L1 regularizer
+double GlmNetCpp::regularizer_L1(const Eigen::VectorXd& x){
+    return x.lpNorm<1>();
+}
+
+// function for the ENet regularizer
+double GlmNetCpp::regularizer_ENet(const Eigen::VectorXd& x){
+    return alpha_ * regularizer_L1(x) + (1 - alpha_) / 2 * x.squaredNorm();
+}
+
+// function to compute the value of the entire objective function
+// f(x) + lambda * regularizers
+double GlmNetCpp::ObjFun(const Eigen::VectorXd& x, double lambda){
+    return SmoothObjFun(x) + lambda * regularizer_ENet(x);
+}
+
 // function for the smooth part of the objective function
 
 double GlmNetCpp::SmoothObjFun(const Eigen::VectorXd& x) {
