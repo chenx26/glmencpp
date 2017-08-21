@@ -6,7 +6,7 @@
 
 int main()
 {
-    int num_obs = 10;
+    int num_obs = 8;
     int num_params = 3;
     double lambda = 0;
     double alpha = 0.5;

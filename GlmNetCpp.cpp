@@ -104,9 +104,9 @@ double GlmNetCpp::ObjFun(const Eigen::VectorXd& x, double lambda){
 
 double GlmNetCpp::SmoothObjFun(const Eigen::VectorXd& x) {
     if (glm_type_ == 1)
-        return GlmNetCpp::ExpNegativeLogLikelihood(x);
+        return ExpNegativeLogLikelihood(x);
     if (glm_type_ == 2)
-        return GlmNetCpp::GammaNegativeLogLikelihood(x);
+        return GammaNegativeLogLikelihood(x);
     return 0;
 }
 
@@ -114,9 +114,9 @@ double GlmNetCpp::SmoothObjFun(const Eigen::VectorXd& x) {
 
 Eigen::VectorXd GlmNetCpp::GradSmoothObjFun(const Eigen::VectorXd& x) {
     if (glm_type_ == 1)
-        return GlmNetCpp::GradExpNegativeLogLikelihood(x);
+        return GradExpNegativeLogLikelihood(x);
     if (glm_type_ == 2)
-        return GlmNetCpp::GradGammaNegativeLogLikelihood(x);
+        return GradGammaNegativeLogLikelihood(x);
     return Eigen::VectorXd::Zero(static_cast<int>(predictor_matrix_.cols()));
 }
 
@@ -132,22 +132,25 @@ Eigen::VectorXd GlmNetCpp::ProxGradDescent(double lambda) {
     int num_params = static_cast<int>(predictor_matrix_.cols());
 
     Eigen::VectorXd x = Eigen::VectorXd::Zero(num_params);
-    Eigen::VectorXd xprev = x;
+    Eigen::VectorXd xprev = Eigen::VectorXd::Zero(num_params);
     Eigen::VectorXd z;
     int k = 0;
     double obj_val = 0;
     double obj_val_prev = 0;
 
     while (k < max_iter_) {
-        Eigen::VectorXd y = x + (k / (k + 3)) * (x - xprev);
+//        Eigen::VectorXd y = x + (k / (k + 3)) * (x - xprev);
+        Eigen::VectorXd y = x;
 //         std::cout << "y = " << y << std::endl;
         while (1) {
             Eigen::VectorXd grad_y = GradSmoothObjFun(y);
 
 //            std::cout << "grad_y =" << grad_y << std::endl;
+            
+            double threshold = t * lambda * alpha_ 
+                                / (1 + t * lambda * (1 - alpha_));
 
-            z = prox_L1(y - t * grad_y,
-                    t * lambda * alpha_ / (1 + t * lambda * (1 - alpha_)));
+            z = prox_L1(y - t * grad_y, threshold);
 //            std::cout << "z = " << z << std::endl;
 
             double lhs = SmoothObjFun(z);
