@@ -8,8 +8,9 @@ int main()
 {
     int num_obs = 10;
     int num_params = 3;
-    double lambda = 1;
+    double lambda = 0;
     double alpha = 0.5;
+    std::cout << fabs(-1.0) << std::endl;
     Eigen::MatrixXd predictor_matrix = Eigen::MatrixXd::Random(num_obs, num_params);
     Eigen::VectorXd response_vector = Eigen::VectorXd::Random(num_obs);
     Eigen::VectorXd init_sol = Eigen::VectorXd::Random(num_params);
@@ -28,10 +29,10 @@ int main()
 //    // print the outputs of helper functions
     std::cout << test_glm.ExpNegativeLogLikelihood(init_sol) << std::endl;
     std::cout << test_glm.GradExpNegativeLogLikelihood(init_sol) << std::endl;
-    std::cout << test_glm.SmoothObjFun(init_sol, lambda) << std::endl;
-    std::cout << test_glm.GradSmoothObjFun(init_sol, lambda) << std::endl;
+    std::cout << test_glm.SmoothObjFun(init_sol) << std::endl;
+    std::cout << test_glm.GradSmoothObjFun(init_sol) << std::endl;
     std::cout << Eigen::VectorXd::LinSpaced(5,0,1).maxCoeff() << std::endl;
-    std::cout << test_glm.SoftThresholding(init_sol, 0.5) << std::endl;
+    std::cout << test_glm.prox_L1(init_sol, 0.5) << std::endl;
     std::cout << test_glm.ProxGradDescent(lambda) << std::endl;
 
 //  code to test the GlmNetCvCpp functions

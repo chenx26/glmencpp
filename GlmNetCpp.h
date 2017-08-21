@@ -15,6 +15,7 @@
 #define GLMNETCPP_H
 #include <iostream>
 #include <Eigen/Dense>
+#include <math.h> /* fabs */
 
 class GlmNetCpp{
         
@@ -55,10 +56,10 @@ public:
     double regularizer_ENet(const Eigen::VectorXd& x);
     
     // function for the smooth part of the objective function
-    double SmoothObjFun(const Eigen::VectorXd& x, double lambda);
+    double SmoothObjFun(const Eigen::VectorXd& x);
     
     // function for the gradient of the smooth part of the objective function
-    Eigen::VectorXd GradSmoothObjFun(const Eigen::VectorXd& x, double lambda);
+    Eigen::VectorXd GradSmoothObjFun(const Eigen::VectorXd& x);
     
     // function for performing Proximal Gradient Descent (PGD)
     Eigen::VectorXd ProxGradDescent(double lambda);

@@ -72,8 +72,8 @@ double GlmNetCpp::GammaNegativeLogLikelihood(const Eigen::VectorXd& x) {
 
 // function to compute the gradient of the negative log-likelihood of Gamma GLM
 
-Eigen::VectorXd GradGammaNegativeLogLikelihood(const Eigen::VectorXd& x) {
-    return Eigen::VectorXd::Zero(3);
+Eigen::VectorXd GlmNetCpp::GradGammaNegativeLogLikelihood(const Eigen::VectorXd& x) {
+    return Eigen::VectorXd::Zero(static_cast<int>(predictor_matrix_.cols()));
 }
 
 // function for the prox of L1 regularizer,
@@ -107,6 +107,7 @@ double GlmNetCpp::SmoothObjFun(const Eigen::VectorXd& x) {
         return GlmNetCpp::ExpNegativeLogLikelihood(x);
     if (glm_type_ == 2)
         return GlmNetCpp::GammaNegativeLogLikelihood(x);
+    return 0;
 }
 
 // function for the gradient of the smooth part of the objective function
@@ -116,6 +117,7 @@ Eigen::VectorXd GlmNetCpp::GradSmoothObjFun(const Eigen::VectorXd& x) {
         return GlmNetCpp::GradExpNegativeLogLikelihood(x);
     if (glm_type_ == 2)
         return GlmNetCpp::GradGammaNegativeLogLikelihood(x);
+    return Eigen::VectorXd::Zero(static_cast<int>(predictor_matrix_.cols()));
 }
 
 // function for performing Proximal Gradient Descent (PGD)
@@ -133,23 +135,25 @@ Eigen::VectorXd GlmNetCpp::ProxGradDescent(double lambda) {
     Eigen::VectorXd xprev = x;
     Eigen::VectorXd z;
     int k = 0;
+    double obj_val = 0;
+    double obj_val_prev = 0;
 
     while (k < max_iter_) {
         Eigen::VectorXd y = x + (k / (k + 3)) * (x - xprev);
 //         std::cout << "y = " << y << std::endl;
         while (1) {
-            Eigen::VectorXd grad_y = GradSmoothObjFun(y, lambda);
+            Eigen::VectorXd grad_y = GradSmoothObjFun(y);
 
 //            std::cout << "grad_y =" << grad_y << std::endl;
 
-            z = SoftThresholding(y - t * grad_y,
-                    t * lambda * alpha_);
+            z = prox_L1(y - t * grad_y,
+                    t * lambda * alpha_ / (1 + t * lambda * (1 - alpha_)));
 //            std::cout << "z = " << z << std::endl;
 
-            double lhs = SmoothObjFun(z, lambda);
+            double lhs = SmoothObjFun(z);
 //            std::cout << "lhs =" << lhs << std::endl;
 
-            double rhs1 = SmoothObjFun(y, lambda);
+            double rhs1 = SmoothObjFun(y);
 //            std::cout << "rhs1 =" << rhs1 << std::endl;
 
             double rhs2 = grad_y.transpose() * (z - y);
@@ -176,6 +180,13 @@ Eigen::VectorXd GlmNetCpp::ProxGradDescent(double lambda) {
         }
         xprev = x;
         x = z;
+        
+        obj_val_prev = obj_val;
+        obj_val = ObjFun(x, lambda);
+        
+        if (k > 1)
+            if (fabs(obj_val - obj_val_prev) < abs_tol_)
+                break;
         k++;
     }
 //    std::cout << "num_iter = " << k << std::endl;
